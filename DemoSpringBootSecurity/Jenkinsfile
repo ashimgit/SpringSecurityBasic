@@ -1,0 +1,20 @@
+//@Library('pipeline-lib') import com.apple.jenkins.*
+
+node {
+    try {
+    // Cleanup workspace
+    stage('Wipe workspace') {
+            step([$class: 'WsCleanup'])
+        }
+        // Git Checkout
+    stage('Git Clone App') {
+        def projectName = new utils().getProjectName()
+        sh "git clone git@github.com:ashimgit/${projectName}.git -b ${env.BRANCH_NAME} ."
+        }
+    // Starts Pipeline
+    def start = new pipeline().startPipeline()
+        } catch (error) {
+        currentBuild.result = "FAILURE"
+        throw error
+    }
+}
